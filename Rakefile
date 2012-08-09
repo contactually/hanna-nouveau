@@ -20,7 +20,7 @@ Jeweler::Tasks.new do |gem|
   gem.authors = ["Erik Hollensbe", "James Tucker", "Mislav Marohnic"]
   # Include your dependencies below. Runtime dependencies are required when using your gem,
   # and development dependencies are only needed for development (ie running rake tasks, tests, etc)
-  gem.add_runtime_dependency 'haml', "= 3.0.25"
+  gem.add_runtime_dependency 'haml', ">= 3.0.25"
   gem.add_runtime_dependency 'rdoc'
   gem.add_development_dependency 'jeweler'
   gem.add_development_dependency 'rake'
