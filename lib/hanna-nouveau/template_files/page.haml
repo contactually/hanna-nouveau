@@ -4,34 +4,14 @@
 .header
   - title = capture_haml do
     - if file_page
-      = values[:file].name
+      = values[:file].name.gsub(/\.rdoc/, '')
     - else
-      %span.type= values[:classmod]
-      = values[:entry].full_name
+      = values[:entry].name.gsub(/Controller/, '')
   - if title_in_description
     .name= title
   - else
     %h1.name= title
-    
-  - if file_page
-    .paths
-      = values[:file].relative_name
-  - else
-    %ol.paths
-      - values[:entry].in_files.each_with_index do |file, index|
-        %li{ :class => index > 0 ? 'other' : nil }
-          -# FIXME cleanup
-          = link_to file.full_name, Pathname.new(file.path).relative_path_from(Pathname.new(values[:entry].path).dirname)
-      - if values[:entry].in_files.size > 1
-        %li
-          %a.show{ :href => '#', :onclick => 'this.parentNode.parentNode.className += " expanded"; this.parentNode.removeChild(this); return false' } show all
           
-  - if values[:entry].parent 
-    .parent
-      Parent:
-      -# FIXME helper method
-      %strong= link_to values[:entry].parent.name, Pathname.new(class_dir) + Pathname.new(values[:entry].parent.path).relative_path_from(Pathname.new values[:entry].path)
-
   - if values[:entry].respond_to?(:last_modified) and values[:entry].last_modified
     .last-update
       Last Update:

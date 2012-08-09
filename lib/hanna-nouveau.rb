@@ -96,9 +96,7 @@ class RDoc::Generator::Hanna
     @main_page_uri = @files.find { |f| f.name == @options.main_page }.path rescue ''
     File.open(outjoin(INDEX_OUT), 'w') { |f| f << haml_file(templjoin(INDEX_PAGE)).to_html(binding) }
 
-    generate_index(FILE_INDEX_OUT,   FILE_INDEX,   'File',   { :files => @files})
     generate_index(CLASS_INDEX_OUT,  CLASS_INDEX,  'Class',  { :classes => @classes })
-    generate_index(METHOD_INDEX_OUT, METHOD_INDEX, 'Method', { :methods => @methods, :attributes => @attributes })
   end
 
   def generate_index(outfile, templfile, index_name, values)
@@ -122,6 +120,7 @@ class RDoc::Generator::Hanna
 
     # FIXME non-Ruby files
     @files.each do |file|
+      next if file.name.include? '.rb'
       path = Pathname.new(file.path)
       stylesheet = Pathname.new(STYLE_OUT).relative_path_from(path.dirname)
       
@@ -158,6 +157,8 @@ class RDoc::Generator::Hanna
     # FIXME refactor
 
     @classes.each do |klass|
+      next if klass.type == 'module'
+
       outfile = classfile(klass)
       stylesheet = Pathname.new(STYLE_OUT).relative_path_from(outfile.dirname)
       sections = {}
@@ -167,11 +168,12 @@ class RDoc::Generator::Hanna
         klass.methods_by_type(section).each do |type, visibilities|
           visibilities.each do |visibility, methods|
             aliases, methods = methods.partition{|x| x.is_alias_for}
+            # Roy: only include public instance methods
+            next if visibility.to_s.capitalize != 'Public' && type.to_s.capitalize != 'Instance'
             method_types << ["#{visibility.to_s.capitalize} #{type.to_s.capitalize}", methods.sort] unless methods.empty?
-            alias_types << ["#{visibility.to_s.capitalize} #{type.to_s.capitalize}", aliases.sort] unless aliases.empty?
           end
         end
-        sections[section] = {:constants=>constants, :attributes=>attributes, :method_types=>method_types, :alias_types=>alias_types}
+        sections[section] = {:method_types=>method_types, :alias_types=>alias_types}
       end
 
       values = { 
@@ -179,7 +181,7 @@ class RDoc::Generator::Hanna
         :entry => klass,
         :stylesheet => stylesheet,
         :classmod => klass.type,
-        :title => klass.full_name,
+        :title => klass.name.gsub(/Controller/, ''),
         :list_title => nil,
         :description => klass.description,
         :sections => sections
@@ -245,23 +247,29 @@ class RDoc::Generator::Hanna
 
     entries.sort.inject('') do |out, klass|
       unless namespaces[klass.full_name]
-        if parent
-          text = '<span class="parent">%s::</span>%s' % [parent.full_name, klass.name]
-        else
-          text = klass.name
-        end
+        # Roy: we dont care about parent classes
+        #if parent
+        #  text = '<span class="parent">%s::</span>%s' % [parent.full_name, klass.name]
+        #else
+        # Roy :strip out controller
+          text = klass.name.gsub(/Controller/, '')
+        #end
 
-        if klass.document_self
-          out << '<li>'
-          out << link_to(text, classfile(klass))
+        unless klass.type == 'module'
+          if klass.document_self
+            out << '<li>'
+            out << link_to(text, classfile(klass))
+          end
         end
 
         subentries = @classes.select { |x| x.full_name[/^#{klass.full_name}::/] }
         subentries.each { |x| namespaces[x.full_name] = true }
         out << "\n<ol>" + render_class_tree(subentries, klass) + "\n</ol>"
 
-        if klass.document_self
-          out << '</li>'
+        unless klass.type == 'module'
+          if klass.document_self
+            out << '</li>'
+          end
         end
       end
 

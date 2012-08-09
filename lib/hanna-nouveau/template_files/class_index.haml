@@ -1,3 +1,4 @@
-%h1= values[:list_title]
+%h1 Resources
+%a{:target => 'docwin', :href => "files/#{@options.main_page.gsub(/\.rdoc/, '_rdoc.html')}"} README
 %ol#index-entries.classes
   = render_class_tree values[:classes].select { |x| x.full_name !~ /::/ }
