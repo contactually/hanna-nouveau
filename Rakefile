@@ -11,7 +11,6 @@ require 'rake'
 
 require 'jeweler'
 Jeweler::Tasks.new do |gem|
-  # gem is a Gem::Specification... see http://docs.rubygems.org/read/chapter/20 for more options
   gem.name = "hanna-nouveau"
   gem.homepage = "http://github.com/erikh/hanna-nouveau"
   gem.license = "MIT"
@@ -27,15 +26,6 @@ Jeweler::Tasks.new do |gem|
   gem.add_development_dependency 'rake'
 end
 Jeweler::RubygemsDotOrgTasks.new
-
-require 'rake/testtask'
-Rake::TestTask.new(:test) do |test|
-  test.libs << 'lib' << 'test'
-  test.pattern = 'test/**/test_*.rb'
-  test.verbose = true
-end
-
-task :default => :test
 
 require 'rdoc/task'
 Rake::RDocTask.new do |rdoc|
