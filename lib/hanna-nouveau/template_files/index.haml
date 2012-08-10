@@ -5,4 +5,4 @@
     %meta{ :content => "text/html; charset=#{@options.charset}", "http-equiv" => "Content-Type" }
   %frameset{ :cols => "20%, *", :border => "1", :frameborder => "1", :bordercolor => "gray" }
     %frame{ :name => "Classes", :src => "fr_class_index.html" }
-      %frame{ :name => "docwin", :src => "files/#{@options.main_page.gsub(/\.rdoc/, '_rdoc.html')}" }=""
+    %frame{ :name => "docwin", :src => "files/#{@options.main_page.gsub(/\.rdoc/, '_rdoc.html')}" }=""
