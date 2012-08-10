@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = "hanna-nouveau-hacked"
-  s.version = "0.2.6"
+  s.version = "0.2.7"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["Roy Quader", "Erik Hollensbe", "James Tucker", "Mislav Marohnic"]
-  s.date = "2012-08-09"
+  s.date = "2012-08-10"
   s.description = ""
   s.email = "roybotnik@gmail.com"
   s.extra_rdoc_files = [
